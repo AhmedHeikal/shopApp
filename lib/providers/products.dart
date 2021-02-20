@@ -24,7 +24,9 @@ class Products with ChangeNotifier {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
-
+      if (extractedData == null) {
+        return;
+      }
       extractedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
           id: prodId,
@@ -72,21 +74,33 @@ class Products with ChangeNotifier {
     }
   }
 
-  Future<void> updateProduct(String id, Product newProduct) async {
+  Future<void> updateProduct(String id, Product newProduct, String type) async {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
       final url =
           'https://flutter-update-746d0-default-rtdb.firebaseio.com/products/$id.json';
-      await http.patch(url,
-          body: json.encode({
-            'title': newProduct.title,
-            'description': newProduct.description,
-            'imageUrl': newProduct.imageUrl,
-            'price': newProduct.price,
-          }));
-      _items[prodIndex] = newProduct;
-      notifyListeners();
+      if (type == 'product') {
+        await http.patch(url,
+            body: json.encode({
+              'title': newProduct.title,
+              'description': newProduct.description,
+              'imageUrl': newProduct.imageUrl,
+              'price': newProduct.price,
+            }));
+      } else if (type == 'favorite') {
+        final response = await http.patch(url,
+            body: json.encode({
+              'isFavorite': newProduct.isFavorite,
+            }));
+        if (response.statusCode >= 400) {
+          newProduct.toggleFavoriteStatus();
+          notifyListeners();
+          throw HttpException('Could not delete product.');
+        }
+      }
     }
+    _items[prodIndex] = newProduct;
+    notifyListeners();
   }
 
   Future<void> deleteProduct(String id) async {

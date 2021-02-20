@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/cart.dart';
 import '../providers/product.dart';
 import '../screens/product_detail_screen.dart';
+import '../providers/products.dart';
 
 class ProductItem extends StatelessWidget {
   // final String id;
@@ -17,6 +18,7 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scaffold = ScaffoldMessenger.of(context);
     final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
     return ClipRRect(
@@ -40,8 +42,18 @@ class ProductItem extends StatelessWidget {
             builder: (ctx, product, _) => IconButton(
               icon: Icon(
                   product.isFavorite ? Icons.favorite : Icons.favorite_border),
-              onPressed: () {
+              onPressed: () async {
                 product.toggleFavoriteStatus();
+                try {
+                  await Provider.of<Products>(context, listen: false)
+                      .updateProduct(product.id, product, 'favorite');
+                } catch (error) {
+                  scaffold.showSnackBar(SnackBar(
+                      content: Text(
+                    'Updating failed!',
+                    textAlign: TextAlign.center,
+                  )));
+                }
               },
               color: Theme.of(context).accentColor,
             ),
