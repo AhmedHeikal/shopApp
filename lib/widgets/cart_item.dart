@@ -44,12 +44,14 @@ class CartItem extends StatelessWidget {
             title: Text('Are you syre?'),
             content: Text('Do you want to remove the item from the cart?'),
             actions: [
+              // ignore: deprecated_member_use
               FlatButton(
                 onPressed: () {
                   Navigator.of(ctx).pop(false);
                 },
                 child: Text('No'),
               ),
+              // ignore: deprecated_member_use
               FlatButton(
                 onPressed: () {
                   Navigator.of(ctx).pop(true);

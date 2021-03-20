@@ -87,6 +87,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
             title: Text('An error Occured!'),
             content: Text('Something went wrong.'),
             actions: [
+              // ignore: deprecated_member_use
               FlatButton(
                   onPressed: () {
                     Navigator.of(ctx).pop();

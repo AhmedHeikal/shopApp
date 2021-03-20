@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../screens/user_product_screen.dart';
+
 import '../screens/orders_screen.dart';
+import '../providers/auth.dart';
+import '../helpers/custom_route.dart';
 
 class AppDrwaer extends StatelessWidget {
   @override
@@ -26,8 +30,13 @@ class AppDrwaer extends StatelessWidget {
             leading: Icon(Icons.payment),
             title: Text('Your Orders'),
             onTap: () {
-              Navigator.of(context)
-                  .pushReplacementNamed(OrderScreeen.routeName);
+              // Navigator.of(context)
+              //     .pushReplacementNamed(OrderScreeen.routeName);
+              Navigator.of(context).pushReplacement(
+                CustomRoute(
+                  builder: (ctx) => OrderScreeen(),
+                ),
+              );
             },
           ),
           Divider(),
@@ -37,6 +46,16 @@ class AppDrwaer extends StatelessWidget {
             onTap: () {
               Navigator.of(context)
                   .pushReplacementNamed(UserProductsScreen.routeName);
+            },
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.exit_to_app),
+            title: Text('Logout'),
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushReplacementNamed('/');
+              Provider.of<Auth>(context, listen: false).logout();
             },
           ),
         ],
